@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8">
+  <title>Online Roulette</title>
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+  <style>
+    body { font-family: Arial, sans-serif; background: #0b3d0b; color: white; text-align: center; }
+    h1 { margin-top: 20px; }
+    .table { background: #116611; display: inline-block; padding: 20px; border-radius: 10px; }
+    .btn { background: #333; border: none; padding: 10px 15px; margin: 5px; color: white; cursor: pointer; border-radius: 5px; }
+    .red { background: red; }
+    .black { background: black; }
+    input { margin: 5px; padding: 5px; }
+    ul { list-style: none; padding: 0; }
+  </style>
+</head>
+<body>
+  <h1>🎡 Online Roulette</h1>
+  <p id="status">Várakozás a körre...</p>
+
+  <div class="table">
+    <div>
+      <button class="btn red" onclick="placeBet('color', 'red')">Piros</button>
+      <button class="btn black" onclick="placeBet('color', 'black')">Fekete</button>
+      <button class="btn" onclick="placeBet('parity', 'even')">Páros</button>
+      <button class="btn" onclick="placeBet('parity', 'odd')">Páratlan</button>
+      <button class="btn" onclick="placeBet('range', 'low')">1–18</button>
+      <button class="btn" onclick="placeBet('range', 'high')">19–36</button>
+    </div>
+    <div>
+      <input type="number" id="betNumber" placeholder="Szám (0–36)">
+      <button class="btn" onclick="betNumber()">Számra tét</button>
+    </div>
+    <div>
+      <input type="number" id="amount" value="100">
+    </div>
+  </div>
+
+  <h3>Játékosok</h3>
+  <ul id="players"></ul>
+
+  <h3 id="result"></h3>
+</body>
+</html>

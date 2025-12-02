@@ -1,0 +1,52 @@
+const socket = io({ transports: ["websocket"] });
+
+socket.on("connect", () => {
+  console.log("Connected to server");
+});
+
+socket.on("update_players", (data) => {
+  const list = document.getElementById("players");
+  list.innerHTML = "";
+  for (const id in data) {
+    const li = document.createElement("li");
+    li.textContent = `${data[id].name}: ${data[id].balance} Ft`;
+    list.appendChild(li);
+  }
+});
+
+socket.on("round_status", (data) => {
+  document.getElementById("status").textContent =
+    data.status === "open" ? "Tétleadás nyitva!" : "Tétleadás zárva!";
+});
+
+socket.on("bet_placed", (data) => {
+  console.log(`${data.player} bet ${data.amount} on ${data.type}=${data.choice}`);
+});
+
+socket.on("result", (data) => {
+  document.getElementById("result").textContent =
+    `Nyertes szám: ${data.number} (${data.color})`;
+});
+
+socket.on("error", (err) => {
+  alert(err.message);
+});
+
+function placeBet(type, choice) {
+  const amount = parseInt(document.getElementById("amount").value);
+  if (isNaN(amount) || amount <= 0) {
+    alert("Adj meg egy érvényes tétösszeget!");
+    return;
+  }
+  socket.emit("place_bet", { type, choice, amount });
+}
+
+function betNumber() {
+  const num = parseInt(document.getElementById("betNumber").value);
+  const amount = parseInt(document.getElementById("amount").value);
+  if (isNaN(num) || num < 0 || num > 36) {
+    alert("Adj meg egy számot 0 és 36 között!");
+    return;
+  }
+  socket.emit("place_bet", { type: "number", choice: num, amount });
+}

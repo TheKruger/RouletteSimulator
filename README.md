@@ -6,21 +6,13 @@ A célunk az volt, hogy egy könnyen használható, áttekinthető és élvezete
 👥 Készítők
 
 A projektet készítették:
-
-Nemes Dániel
-
-Birkás Bence
-
-Soós Roland
+- Nemes Dániel
+- Birkás Bence
+- Soós Roland
 
 🛠️ Funkciók
-
-🎡 Rulettkerék pörgetése
-
-💵 Tét elhelyezése különböző mezőkre
-
-🎯 Eredmény megjelenítése
-
-📊 Nyeremény számítása
-
-🧪 Tesztelhető, bővíthető modulok
+- 🎡 Rulettkerék pörgetése
+- 💵 Tét elhelyezése különböző mezőkre
+- 🎯 Eredmény megjelenítése
+- 📊 Nyeremény számítása
+- 🧪 Tesztelhető, bővíthető modulok
