@@ -1,25 +1,51 @@
-name: Run Pytest
+name: Tests
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
-  test:
+  unit:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
 
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-          pip install pytest pytest-xdist pytest-cov
+    - name: Run unit tests
+      run: pytest tests/unit --cov=app
 
-      - name: Run pytest
-        run: |
-          pytest -vv --cov=.
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run integration tests
+      run: pytest tests/integration
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest-playwright
+        playwright install --with-deps
+
+    - name: Run E2E tests
+      run: pytest tests/e2e
