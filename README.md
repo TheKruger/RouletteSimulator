@@ -24,6 +24,7 @@ pip install -r requirements.txt
 
 # Dokumentáció generálás
 ```bash
+pip install sphinx sphinx-autobuild sphinx_rtd_theme
 make html
 ```
 
