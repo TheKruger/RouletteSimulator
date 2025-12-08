@@ -1,12 +1,6 @@
 Flask
 Flask-SocketIO
-sphinx
-sphinx-autobuild
-sphinx_rtd_theme
 sphinx-js
-pytest
-pytest-xdist
-pytest-cov
 flask-testing
 asyncio
 statistics
