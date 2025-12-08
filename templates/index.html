@@ -1,182 +1,157 @@
 <!DOCTYPE html>
 <html lang="hu">
 <head>
-<meta charset="UTF-8">
-<title>Online Roulette</title>
-<script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-
-<style>
-body {
-  font-family: Arial, sans-serif;
-  background:#0b3d0b;
-  color:white;
-  margin:0;
-  padding:0;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-h1 { margin-top:20px; }
-#status { font-size:1.2em; margin:10px; }
-
-#mainWrapper {
-  display:flex;
-  flex-direction:row;
-  justify-content:center;
-  align-items:flex-start;
-  gap:40px;
-  width:90%;
-  margin-top:20px;
-}
-
-#leftSide {
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-}
-
-#rightSide {
-  width:260px;
-  display:flex;
-  flex-direction:column;
-  text-align:left;
-}
-
-/* RULETTASZTAL – klasszikus 3 sor × 12 oszlop */
-#rouletteTable {
-  display: grid;
-  /* 0 oszlop + 12 szám oszlop + 1 "2 to 1" oszlop */
-  grid-template-columns: 80px repeat(12, 60px) 80px;
-  /* 3 sor számok + 1 sor dozen + 1 sor nagy fogadások */
-  grid-template-rows: repeat(3, 60px) 50px 50px;
-
-  gap: 4px;
-  margin-top: 20px;
-  padding: 12px 16px 16px;
-
-  background: #0d2a0d;
-  border-radius: 14px;
-  border: 2px solid #c9a96b;
-  box-shadow:
-    0 0 0 2px #c9a96b,
-    0 0 0 6px #061406;
-}
-
-/* Alap cellák (számok, 0, stb.) */
-.table-cell {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 16px;
-  color: white;
-  user-select: none;
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.15);
-}
-
-/* Színek */
-.green { background:#27ae60; }
-.red   { background:#c0392b; }
-.black { background:#1c1c1c; }
-
-/* Speciális mezők (dozen, 2to1, nagy fogadások) */
-.special {
-  background:#2c3e50;
-  border-radius:6px;
-  color:white;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight:bold;
-  font-size:14px;
-  cursor:pointer;
-  user-select:none;
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.1);
-}
-
-/* Dozen sor (1st 12, 2nd 12, 3rd 12) – belső grid */
-.dozens-row,
-.bottom-row {
-  display: grid;
-  gap: 4px;
-}
-
-.dozens-row {
-  grid-template-columns: repeat(3, 1fr);
-}
-
-.bottom-row {
-  grid-template-columns: repeat(6, 1fr);
-}
-
-#history {
-  display:flex;
-  flex-wrap:wrap;
-  gap:5px;
-  margin-bottom:15px;
-}
-
-#players {
-  margin-top:10px;
-  padding-left:20px;
-}
-
-#wheelPointer {
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-bottom: 25px solid #ffcc00; /* sárga mutató */
-  position: absolute;
-  top: 185px;     /* finomhangolható */
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-  filter: drop-shadow(0 0 4px black);
-}
-
-@keyframes pointerBlink {
-  0%   { filter: drop-shadow(0 0 0px yellow); }
-  50%  { filter: drop-shadow(0 0 10px yellow); }
-  100% { filter: drop-shadow(0 0 0px yellow); }
-}
-
-.pointer-active {
-  animation: pointerBlink 0.5s ease-in-out 3;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Roulette</title>
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
 </head>
-
 <body>
+    <!-- Név megadás modal -->
+    <div id="nameModal" class="modal">
+        <div class="modal-content">
+            <h2>Üdvözöllek a Rulettben!</h2>
+            <p>Kérjük, add meg a neved a játékhoz:</p>
+            <input type="text" id="nameInput" placeholder="Add meg a neved..." maxlength="20">
+            <button id="nameSubmit">Belépés</button>
+        </div>
+    </div>
 
-<h1>🎡 Online Roulette</h1>
-<p id="status">Várakozás a körre...</p>
+    <div class="container">
+        <header>
+            <h1>🎰 ONLINE RULETT</h1>
+            <div id="status" class="status">Csatlakozás...</div>
+        </header>
 
-<div id="mainWrapper">
+        <div class="game-area">
+            <!-- BAL OLDAL: RULETT ASZTAL -->
+            <div class="table-section">
+                <div class="table-container">
+                    <!-- Zsetonok -->
+                    <div class="chips-row">
+                        <div class="chip" data-value="1" style="background: #3498db;">1</div>
+                        <div class="chip" data-value="5" style="background: #e74c3c;">5</div>
+                        <div class="chip" data-value="10" style="background: #2ecc71;">10</div>
+                        <div class="chip" data-value="25" style="background: #f39c12;">25</div>
+                        <div class="chip" data-value="50" style="background: #9b59b6;">50</div>
+                        <div class="chip" data-value="100" style="background: #1abc9c;">100</div>
+                        <div class="chip" data-value="200" style="background: #34495e;">200</div>
+                        <div class="chip" data-value="500" style="background: #e67e22;">500</div>
+                        <div class="chip" data-value="1000" style="background: #c0392b;">1000</div>
+                        <div class="chip" data-value="5000" style="background: #16a085;">5000</div>
+                    </div>
 
-  <div id="leftSide">
-    <canvas id="rouletteWheel" width="400" height="400"></canvas>
-    <div id="wheelPointer"></div>
-    <div id="rouletteTable"></div>
+                    <!-- Rulett asztal -->
+                    <div class="roulette-table">
+                        <!-- 0 mező -->
+                        <div class="number-cell green zero" data-number="0">0</div>
+                        
+                        <!-- 1-36 számok -->
+                        <div class="numbers-grid">
+                            <!-- 3. sor -->
+                            <div class="number-row" data-row="3">
+                                <div class="number-cell red" data-number="3">3</div>
+                                <div class="number-cell black" data-number="6">6</div>
+                                <div class="number-cell red" data-number="9">9</div>
+                                <div class="number-cell red" data-number="12">12</div>
+                                <div class="number-cell black" data-number="15">15</div>
+                                <div class="number-cell red" data-number="18">18</div>
+                                <div class="number-cell red" data-number="21">21</div>
+                                <div class="number-cell black" data-number="24">24</div>
+                                <div class="number-cell red" data-number="27">27</div>
+                                <div class="number-cell red" data-number="30">30</div>
+                                <div class="number-cell black" data-number="33">33</div>
+                                <div class="number-cell red" data-number="36">36</div>
+                            </div>
+                            <!-- 2. sor -->
+                            <div class="number-row" data-row="2">
+                                <div class="number-cell black" data-number="2">2</div>
+                                <div class="number-cell red" data-number="5">5</div>
+                                <div class="number-cell black" data-number="8">8</div>
+                                <div class="number-cell black" data-number="11">11</div>
+                                <div class="number-cell red" data-number="14">14</div>
+                                <div class="number-cell black" data-number="17">17</div>
+                                <div class="number-cell black" data-number="20">20</div>
+                                <div class="number-cell red" data-number="23">23</div>
+                                <div class="number-cell black" data-number="26">26</div>
+                                <div class="number-cell black" data-number="29">29</div>
+                                <div class="number-cell red" data-number="32">32</div>
+                                <div class="number-cell black" data-number="35">35</div>
+                            </div>
+                            <!-- 1. sor -->
+                            <div class="number-row" data-row="1">
+                                <div class="number-cell red" data-number="1">1</div>
+                                <div class="number-cell black" data-number="4">4</div>
+                                <div class="number-cell red" data-number="7">7</div>
+                                <div class="number-cell black" data-number="10">10</div>
+                                <div class="number-cell black" data-number="13">13</div>
+                                <div class="number-cell red" data-number="16">16</div>
+                                <div class="number-cell black" data-number="19">19</div>
+                                <div class="number-cell black" data-number="22">22</div>
+                                <div class="number-cell red" data-number="25">25</div>
+                                <div class="number-cell red" data-number="28">28</div>
+                                <div class="number-cell black" data-number="31">31</div>
+                                <div class="number-cell red" data-number="34">34</div>
+                            </div>
+                        </div>
 
-    <input id="amount" type="number" value="100" style="margin-top:15px;width:100px;">
-  </div>
+                        <!-- 2 to 1 oszlopok -->
+                        <div class="column-bets">
+                            <div class="column-bet" data-column="3">2 to 1</div>
+                            <div class="column-bet" data-column="2">2 to 1</div>
+                            <div class="column-bet" data-column="1">2 to 1</div>
+                        </div>
 
-  <div id="rightSide">
-    <h3>Előző pörgetések</h3>
-    <div id="history"></div>
+                        <!-- 12-esek -->
+                        <div class="dozen-bets">
+                            <div class="dozen-bet" data-dozen="1">1st 12</div>
+                            <div class="dozen-bet" data-dozen="2">2nd 12</div>
+                            <div class="dozen-bet" data-dozen="3">3rd 12</div>
+                        </div>
 
-    <h3>Játékosok</h3>
-    <ul id="players"></ul>
+                        <!-- Alsó fogadások -->
+                        <div class="outside-bets">
+                            <div class="outside-bet low" data-range="low">1-18</div>
+                            <div class="outside-bet even" data-parity="even">EVEN</div>
+                            <div class="outside-bet red" data-color="red">RED</div>
+                            <div class="outside-bet black" data-color="black">BLACK</div>
+                            <div class="outside-bet odd" data-parity="odd">ODD</div>
+                            <div class="outside-bet high" data-range="high">19-36</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <h3 id="result"></h3>
-  </div>
+            <!-- JOBB OLDAL: KERÉK ÉS INFO -->
+            <div class="wheel-section">
+                <!-- Kerék -->
+                <div class="wheel-container">
+                    <canvas id="rouletteWheel" width="450" height="450"></canvas>
+                </div>
 
-</div>
+                <!-- Játékosok és History -->
+                <div class="info-panel">
+                    <div class="history-section">
+                        <h3>ELŐZŐ PÖRGETÉSEK</h3>
+                        <div id="history" class="history-numbers"></div>
+                    </div>
 
+                    <div class="players-section">
+                        <h3>JÁTÉKOSOK</h3>
+                        <ul id="players" class="players-list"></ul>
+                    </div>
+
+                    <div class="result-section">
+                        <h3 id="result">VÁRAKOZÁS A PÖRGETÉSRE...</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Értesítések konténer -->
+    <div id="notifications"></div>
 </body>
 </html>
