@@ -14,7 +14,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install pytest pytest-cov pytest-xdist requests
+        pip install pytest pytest-cov pytest-xdist
 
     - name: Run unit tests
       run: pytest -vv test/unit --cov=app
