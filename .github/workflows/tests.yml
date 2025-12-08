@@ -14,6 +14,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-xdist
 
     - name: Run unit tests
       run: pytest test/unit --cov=app
@@ -29,6 +30,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
+        pip install pytest
 
     - name: Run integration tests
       run: pytest test/integration
@@ -44,7 +46,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
-        pip install pytest-playwright
+        pip install pytest pytest-playwright
         playwright install --with-deps
 
     - name: Run E2E tests
