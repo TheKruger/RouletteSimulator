@@ -16,7 +16,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run unit tests
-      run: pytest tests/unit --cov=app
+      run: pytest test/unit --cov=app
 
   integration:
     runs-on: ubuntu-latest
@@ -31,7 +31,7 @@ jobs:
         pip install -r requirements.txt
 
     - name: Run integration tests
-      run: pytest tests/integration
+      run: pytest test/integration
 
   e2e:
     runs-on: ubuntu-latest
@@ -48,4 +48,4 @@ jobs:
         playwright install --with-deps
 
     - name: Run E2E tests
-      run: pytest tests/e2e
+      run: pytest test/e2e
