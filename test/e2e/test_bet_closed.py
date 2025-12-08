@@ -1,6 +1,7 @@
 import subprocess
 import time
 import pytest
+import requests
 from playwright.sync_api import Page, expect
 
 @pytest.fixture(scope="session", autouse=True)
@@ -18,6 +19,15 @@ def start_server():
 
 
 def test_place_bet_when_closed(page: Page):
+
+    # várunk a szerverre
+    for _ in range(30):
+        try:
+            requests.get("http://127.0.0.1:5001")
+            break
+        except:
+            time.sleep(0.5)
+
     page.goto("http://127.0.0.1:5001")
 
     # név megadása
