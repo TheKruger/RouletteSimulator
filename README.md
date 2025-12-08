@@ -31,3 +31,14 @@ make html
 ```
 pytest
 ```
+
+# Benchmark
+```bash
+cd tools
+python stress.py --url "http://192.168.1.100:5000" --bots 20 --duration 60
+```
+
+Output fájl.
+```bash
+python stress.py --url "http://192.168.1.100:5000" --bots 20 --duration 60 --output "results.json"
+```

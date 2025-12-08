@@ -8,3 +8,5 @@ pytest
 pytest-xdist
 pytest-cov
 flask-testing
+asyncio
+statistics
